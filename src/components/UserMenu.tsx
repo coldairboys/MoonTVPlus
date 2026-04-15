@@ -552,6 +552,10 @@ export const UserMenu: React.FC = () => {
       const savedDisableAutoLoadDanmaku = localStorage.getItem('disableAutoLoadDanmaku');
       if (savedDisableAutoLoadDanmaku !== null) {
         setDisableAutoLoadDanmaku(savedDisableAutoLoadDanmaku === 'true');
+      } else {
+        const runtimeDefault =
+          (window as any).RUNTIME_CONFIG?.DANMAKU_AUTO_LOAD_DEFAULT !== false;
+        setDisableAutoLoadDanmaku(!runtimeDefault);
       }
 
       const savedDanmakuMaxCount = localStorage.getItem('danmakuMaxCount');
@@ -1343,7 +1347,11 @@ export const UserMenu: React.FC = () => {
     setBufferStrategy('medium');
     setNextEpisodePreCache(true);
     setNextEpisodeDanmakuPreload(true);
-    setDisableAutoLoadDanmaku(false);
+    const defaultDanmakuAutoLoad =
+      (typeof window !== 'undefined' &&
+        (window as any).RUNTIME_CONFIG?.DANMAKU_AUTO_LOAD_DEFAULT !== false) ||
+      false;
+    setDisableAutoLoadDanmaku(!defaultDanmakuAutoLoad);
     setHomeBannerEnabled(true);
     setHomeContinueWatchingEnabled(true);
     setHomeModules(defaultHomeModules);
@@ -1368,7 +1376,10 @@ export const UserMenu: React.FC = () => {
       localStorage.setItem('bufferStrategy', 'medium');
       localStorage.setItem('nextEpisodePreCache', 'true');
       localStorage.setItem('nextEpisodeDanmakuPreload', 'true');
-      localStorage.setItem('disableAutoLoadDanmaku', 'false');
+      localStorage.setItem(
+        'disableAutoLoadDanmaku',
+        String(!defaultDanmakuAutoLoad)
+      );
       localStorage.setItem('danmakuMaxCount', '0');
       localStorage.setItem('danmaku_heatmap_disabled', 'false');
       localStorage.setItem('homeBannerEnabled', 'true');
